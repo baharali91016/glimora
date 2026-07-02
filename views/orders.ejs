@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Orders | Admin Dashboard</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#f8fbff;
+    font-family:Poppins,sans-serif;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<%- include("partials/navbar") %>
+
+<div class="container py-5">
+
+<h2 class="mb-4">
+Customer Orders
+</h2>
+
+<% if(orders.length===0){ %>
+
+<div class="alert alert-warning">
+No orders yet.
+</div>
+
+<% } %>
+
+<% orders.forEach(order=>{ %>
+
+<div class="card mb-4 shadow">
+
+<div class="card-body">
+
+<h4>
+<%= order.customerName %>
+</h4>
+
+<p>
+
+<strong>Email:</strong>
+<%= order.customerEmail %>
+
+<br>
+
+<strong>Phone:</strong>
+<%= order.phone %>
+
+<br>
+
+<strong>Address:</strong>
+<%= order.address %>
+
+</p>
+
+<hr>
+
+<h5>Items</h5>
+
+<ul>
+
+<% order.items.forEach(item=>{ %>
+
+<li>
+
+<%= item.product.name %>
+
+×
+
+<%= item.quantity %>
+
+-
+
+Rs. <%= item.price %>
+
+</li>
+
+<% }) %>
+
+</ul>
+
+<hr>
+
+<p>
+
+<strong>Total:</strong>
+
+Rs. <%= order.totalAmount %>
+
+</p>
+
+<p>
+
+<strong>Status:</strong>
+
+<span class="badge bg-primary">
+
+<%= order.status %>
+
+</span>
+
+</p>
+
+<form
+action="/orders/update-status/<%= order._id %>"
+method="POST">
+
+<select
+name="status"
+class="form-select mb-2">
+
+<option
+<%= order.status==="Pending"?"selected":"" %>>
+Pending
+</option>
+
+<option
+<%= order.status==="Processing"?"selected":"" %>>
+Processing
+</option>
+
+<option
+<%= order.status==="Shipped"?"selected":"" %>>
+Shipped
+</option>
+
+<option
+<%= order.status==="Delivered"?"selected":"" %>>
+Delivered
+</option>
+
+</select>
+
+<button class="btn btn-success">
+
+Update Status
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</body>
+</html>
