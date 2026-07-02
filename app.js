@@ -80,7 +80,7 @@ app.get("/", async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.status(500).send("Server Error");
+        res.status(500).send("Server Error on Home page: " + err.message + "\n" + err.stack);
     }
 });
 
