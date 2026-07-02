@@ -213,7 +213,7 @@ for (const item of cartItems) {
         // Empty the cart
         await Cart.deleteMany({});
 
-        res.redirect("/order-success");
+        res.redirect(303, "/order-success");
 
     } catch (err) {
 
@@ -258,7 +258,7 @@ app.post("/place-order", async (req,res)=>{
 
         await Cart.deleteMany();
 
-        res.redirect("/orders");
+        res.redirect(303, "/orders");
 
     }catch(err){
 
@@ -443,7 +443,7 @@ if(product.stock <= 0){
             });
         }
 
-        res.redirect("/cart");
+        res.redirect(303, "/cart");
 
     } catch (err) {
         console.log(err);
@@ -504,7 +504,7 @@ app.post("/orders/update-status/:id", isAdmin, async (req, res) => {
             }
         );
 
-        res.redirect("/orders");
+        res.redirect(303, "/orders");
 
     } catch (err) {
 
