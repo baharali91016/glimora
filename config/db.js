@@ -10,6 +10,14 @@ if (!cached) {
 }
 
 async function connectDB() {
+  const uri = process.env.MONGO_URI;
+
+  if (!uri) {
+    const err = new Error("MONGO_URI environment variable is not set");
+    console.error(err);
+    throw err;
+  }
+
   const readyState = mongoose.connection.readyState;
 
   if (readyState === 1) {
@@ -27,7 +35,7 @@ async function connectDB() {
 
   console.log(`Connecting to MongoDB... (readyState: ${readyState})`);
 
-  cached.promise = mongoose.connect(process.env.MONGO_URI, {
+  cached.promise = mongoose.connect(uri, {
     serverSelectionTimeoutMS: 10000,
     bufferCommands: false // Fail fast rather than buffering queries
   });

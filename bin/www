@@ -8,9 +8,11 @@ const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 const server = http.createServer(app);
+const ensureDefaultProduct = require("../config/seed");
 
 connectDB()
-  .then(() => {
+  .then(async () => {
+    await ensureDefaultProduct();
     server.listen(port);
   })
   .catch((err) => {
