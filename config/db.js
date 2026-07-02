@@ -1,4 +1,4 @@
-﻿const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 let cached = global.mongoose;
 
@@ -10,27 +10,38 @@ if (!cached) {
 }
 
 async function connectDB() {
+  const readyState = mongoose.connection.readyState;
 
-  if (cached.conn) {
-    console.log("Using existing MongoDB connection");
-    return cached.conn;
+  if (readyState === 1) {
+    console.log("Using existing MongoDB connection (readyState: 1)");
+    return mongoose.connection;
   }
 
-  if (!cached.promise) {
-
-    console.log("Connecting to MongoDB...");
-
-    cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 15000
-    });
-
+  if (readyState === 2) {
+    console.log("MongoDB is connecting (readyState: 2), waiting for connection...");
+    if (cached.promise) {
+      await cached.promise;
+      return mongoose.connection;
+    }
   }
 
-  cached.conn = await cached.promise;
+  console.log(`Connecting to MongoDB... (readyState: ${readyState})`);
 
-  console.log("MongoDB Connected Successfully");
+  cached.promise = mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 10000,
+    bufferCommands: false // Fail fast rather than buffering queries
+  });
 
-  return cached.conn;
+  try {
+    await cached.promise;
+    console.log("MongoDB Connected Successfully");
+  } catch (err) {
+    cached.promise = null;
+    console.error("MongoDB Connection Error:", err);
+    throw err;
+  }
+
+  return mongoose.connection;
 }
 
 module.exports = connectDB;
